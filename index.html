@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AxiomPhysics - Высшая физика и космология</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #070b14;
+            --card-bg: #111827;
+            --border: #1f293d;
+            --text: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container { width: 100%; max-width: 600px; }
+        header { text-align: center; margin-bottom: 24px; }
+        h1 { font-size: 24px; margin: 0 0 4px 0; color: var(--primary); }
+        .subtitle { font-size: 13px; color: var(--text-secondary); }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        
+        .btn {
+            display: block; width: 100%; padding: 14px;
+            background-color: var(--primary); color: white;
+            border: none; border-radius: 12px; font-size: 15px; font-weight: 600;
+            cursor: pointer; text-align: center; margin-bottom: 12px;
+            transition: background 0.2s; box-sizing: border-box;
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-secondary:hover { background-color: rgba(255,255,255,0.05); }
+        .btn-warning { background-color: var(--warning); color: #000; font-weight: bold; }
+        
+        .tabs { display: flex; gap: 4px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+        .tab-btn {
+            flex: 1; padding: 8px 6px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary);
+            font-size: 11px; font-weight: 600; cursor: pointer; text-align: center; white-space: nowrap;
+        }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .section-box {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .option-btn {
+            display: block; width: 100%; padding: 12px 16px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text); font-size: 14px;
+            cursor: pointer; text-align: left; margin-bottom: 10px;
+            transition: all 0.2s; box-sizing: border-box;
+        }
+        .option-btn:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
+        .option-btn.correct { background: rgba(16, 185, 129, 0.2); border-color: var(--accent); color: #6ee7b7; font-weight: bold; }
+        .option-btn.wrong { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); color: #fca5a5; }
+
+        textarea {
+            width: 100%; height: 100px; padding: 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+            font-size: 14px; box-sizing: border-box; margin-bottom: 12px; resize: vertical;
+        }
+
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-bottom: 12px; background: rgba(99, 102, 241, 0.2); color: #818cf8; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>AxiomPhysics ⚛️</h1>
+        <div class="subtitle">Высшая теоретическая физика и прикладной инжиниринг</div>
+    </header>
+
+    <!-- Главная: список тем -->
+    <div id="screen-home" class="card">
+        <h2 style="margin-top:0; font-size:18px;">Выберите раздел науки</h2>
+        <div class="subtitle" style="margin-bottom: 16px;">Расширенные конспекты, глубокий смысл, реальная практика в инженерии и ИИ-оценка знаний.</div>
+        
+        <button class="btn" onclick="openTopic('lagrange')">1. Аналитическая механика (Лагранжиан)</button>
+        <button class="btn" onclick="openTopic('schrodinger')">2. Квантовая механика (Уравнение Шредингера)</button>
+        <button class="btn" onclick="openTopic('maxwell')">3. Электродинамика (Уравнения Максвелла)</button>
+        <button class="btn" onclick="openTopic('statphys')">4. Статистическая физика (Распределение Гиббса)</button>
+        <button class="btn btn-warning" onclick="openTopic('astrophysics')">5. Астрофизика (ОТО и Черные дыры)</button>
+    </div>
+
+    <!-- Экран изучения темы -->
+    <div id="screen-topic" class="card hidden">
+        <span class="badge" id="topic-badge">Раздел</span>
+        <h2 id="topic-title" style="margin-top:0; font-size:18px; color: var(--warning);"></h2>
+
+        <!-- Переключатель вкладок -->
+        <div class="tabs">
+            <div class="tab-btn active" onclick="switchTab('theory')">📚 Конспект</div>
+            <div class="tab-btn" onclick="switchTab('explanation')">💡 Смысл</div>
+            <div class="tab-btn" onclick="switchTab('practice')">🛠 Практика</div>
+            <div class="tab-btn" onclick="switchTab('trainer')">🎯 Задачи</div>
+            <div class="tab-btn" onclick="switchTab('feynman')">🤖 ИИ-Тест</div>
+        </div>
+
+        <!-- 1. Конспект -->
+        <div id="tab-theory" class="section-box">
+            <div id="content-theory"></div>
+        </div>
+
+        <!-- 2. Физический смысл -->
+        <div id="tab-explanation" class="section-box hidden">
+            <div id="content-explanation"></div>
+        </div>
+
+        <!-- 3. Практика и применение -->
+        <div id="tab-practice" class="section-box hidden" style="border-color: var(--accent); background: rgba(16, 185, 129, 0.02);">
+            <div id="content-practice"></div>
+        </div>
+
+        <!-- 4. Тренажер задач -->
+        <div id="tab-trainer" class="section-box hidden">
+            <div id="content-task" style="font-weight: 500; margin-bottom: 14px;"></div>
+            <div id="content-options"></div>
+            <div id="content-feedback" class="section-box hidden" style="margin-top: 12px; background: rgba(16, 185, 129, 0.1); border-color: var(--accent);"></div>
+        </div>
+
+        <!-- 5. ИИ-Проверка (Метод Фейнмана) -->
+        <div id="tab-feynman" class="section-box hidden">
+            <div style="font-weight: bold; margin-bottom: 8px; color: var(--warning);">📝 Объясни тему своими словами:</div>
+            <div class="subtitle" style="margin-bottom: 10px;">Опиши суть закона или принципа так, как будто объясняешь её наброску инженера. API проверит логику.</div>
+            <textarea id="feynman-input" placeholder="Например: Система выбирает путь с минимальным действием, поэтому уравнения выводятся через кинетическую и потенциальную энергию..."></textarea>
+            <button class="btn btn-warning" onclick="evaluateFeynman()">Отправить на проверку API 🚀</button>
+            <div id="feynman-result" class="section-box hidden" style="margin-top: 12px;"></div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="goHome()" style="margin-top: 16px;">← К списку разделов</button>
+    </div>
+</div>
+
+<script>
+const physicsData = {
+    lagrange: {
+        badge: "Аналитическая механика",
+        title: "Принцип наименьшего действия и Лагранжиан",
+        theory: "<b>Фундаментальный конспект:</b><br><br>" +
+                "1. <b>Отказ от сил Ньютона:</b> Классическая ньютоновская механика требует расчёта всех векторных сил реакций опор и натяжения связей, что на практике для сложных систем превращается в тупик.<br><br>" +
+                "2. <b>Обобщенные координаты ($q_i$):</b> Состояние системы задается набором независимых параметров (например, углами поворота манипулятора, а не декартовыми координатами каждого атома).<br><br>" +
+                "3. <b>Лагранжиан ($L$):</b> Скалярная функция, равная разности кинетической ($T$) и потенциальной ($U$) энергии: $L = T(q, \dot{q}) - U(q)$.<br><br>" +
+                "4. <b>Принцип Гамильтона и Эйлер-Лагранж:</b> Интеграл действия $S = \int L dt$ на истинной траектории принимает стационарное (минимальное) значение. Отсюда выводится уравнение движения: $\\frac{d}{dt}\\left(\\frac{\\partial L}{\\partial \\dot{q}_i}\\right) - \\frac{\\partial L}{\\partial q_i} = 0$.",
+        explanation: "<b>В чем глубокий смысл?</b> Вселенная устроена экстремально рационально. Природа не «вычисляет» вектор каждой силы в каждый момент времени — система «знает» конечную точку и выбирает такой путь развития, при котором затраты действия минимальны.",
+        practice: "<b>🛠 Где это применяется в реальном мире и хайтеке?</b><br><br>" +
+                  "• <b>Робототехника и манипуляторы:</b> Инженеры используют уравнения Лагранжа второго рода для расчета динамики многосуставных роботизированных рук (на заводах Tesla или Boston Dynamics), чтобы мгновенно вычислять крутящие моменты моторов в каждом суставе.<br>" +
+                  "• <b>Аэрокосмическая отрасль:</b> Расчет оптимальных траекторий полета ракет и межпланетных зондов с минимальным расходом топлива.<br>" +
+                  "• <b>Игровая физика и CGI:</b> Движки симуляции мягких тел, одежды и разрушений в киноиндустрии строятся на вариационных принципах.",
+        task: "Какая величина минимизируется на истинной траектории движения системы?",
+        options: ["Полная энергия", "Функционал действия S", "Импульс системы", "Кинетическая энергия"],
+        correct: 1,
+        hint: "Действие S — это интеграл от Лагранжиана по времени, и именно оно стремится к экстремуму.",
+        keywords: ["действие", "миним", "энерги", "траектор", "интеграл", "лагранж"]
+    },
+    schrodinger: {
+        badge: "Квантовая механика",
+        title: "Волновая функция и уравнение Шредингера",
+        theory: "<b>Фундаментальный конспект:</b><br><br>" +
+                "1. <b>Волновая природа материи:</b> В микромире объекты не имеют фиксированных траекторий; они описываются комплексной волновой функцией $\\Psi(\\vec{r}, t)$.<br><br>" +
+                "2. <b>Интерпретация Борна:</b> Смысл волновой функции недетерминирован. Квадрат модуля $|\\Psi|^2$ определяет плотность вероятности обнаружения частицы в конкретной точке пространства.<br><br>" +
+                "3. <b>Операторный подход:</b> Каждой физической величине (координата, импульс, энергия) ставится в соответствие линейный эрмитов оператор.<br><br>" +
+                "4. <b>Уравнение Шредингера:</b> Учебное уравнение вида $i\\hbar \\frac{\\partial}{\\partial t}\\Psi = \\hat{H}\\Psi$, где $\\hat{H}$ — оператор Гамильтона (полная энергия системы), задающий закон эволюции вероятностей во времени.",
+        explanation: "<b>В чем глубокий смысл?</b> Реальность на фундаментальном уровне фундаментально вероятностна. Частица до момента измерения размазана по пространству в виде облака вероятностей. Измерение не просто считывает параметр — оно принудительно «схлопывает» волновую функцию в одно определенное состояние.",
+        practice: "<b>🛠 Где это применяется в реальном мире и хайтеке?</b><br><br>" +
+                  "• <b>Квантовые компьютеры:</b> Кубиты (суперпозиция нулей и единиц) работают на законах квантовой механики и уравнениях Шредингера, выполняя вычисления недоступные классическим чипам.<br>" +
+                  "• <b>Полупроводниковая электроника и микрочипы:</b> Современные транзисторы в процессорах нанометрового масштаба сталкиваются с эффектом квантового туннелирования, без учета которого проектирование чипов невозможно.<br>" +
+                  "• <b>Лазерные технологии:</b> Расчет квантовых переходов электронов в полупроводниках для создания лазеров и светодиодов (OLED-экраны).",
+        task: "Что физически означает квадрат модуля волновой функции |Ψ|²?",
+        options: ["Плотность вероятности обнаружения частицы", "Скорость движения электрона", "Массу ядра атома", "Силу взаимодействия"],
+        correct: 0,
+        hint: "По статистической интерпретации Макса Борна, вероятность обнаружения частицы пропорциональна |Ψ|².",
+        keywords: ["вероятност", "обнаружен", "найти", "частиц", "точку", "волн"]
+    },
+    maxwell: {
+        badge: "Электродинамика полей",
+        title: "Уравнения Максвелла в дифференциальной форме",
+        theory: "<b>Фундаментальный конспект:</b><br><br>" +
+                "1. <b>Единое поле:</b> Система из четырех уравнений в частных производных, полностью описывающая электрические, магнитные поля и их взаимную генерацию.<br><br>" +
+                "2. <b>Законы Гаусса:</b> $\\nabla \\cdot \\vec{E} = \\rho / \\varepsilon_0$ (заряды порождают электрополе) и $\\nabla \\cdot \\vec{B} = 0$ (магнитных зарядов/монополей в природе не существует, силовые линии замкнуты).<br><br>" +
+                "3. <b>Закон Фарадея:</b> $\\nabla \\times \\vec{E} = -\\partial \\vec{B} / \\partial t$ (переменное магнитное поле рождает вихревое электрическое).<br><br>" +
+                "4. <b>Закон Ампера-Максвелла:</b> $\\nabla \\times \\vec{B} = \\mu_0\\vec{j} + \\mu_0\\varepsilon_0\\frac{\\partial \\vec{E}}{\\partial t}$ (ток и меняющееся электрическое поле рождают магнитное).",
+        explanation: "<b>В чем глубокий смысл?</b> Максвелл совершил величайшее объединение в истории науки, связав электричество, магнетизм и свет. Математически из его уравнений автоматически выплывает существование электромагнитных волн, скорость которых в вакууме константна ($c$). Свет — это электромагнитная волна.",
+        practice: "<b>🛠 Где это применяется в реальном мире и хайтеке?</b><br><br>" +
+                  "• <b>Беспроводные сети (Wi-Fi, 5G/6G, Bluetooth):</b> Расчет распространения радиоволн, проектирование фазированных антенных решеток и передатчиков базируется на уравнениях Максвелла.<br>" +
+                  "• <b>Проектирование печатных плат (High-Speed PCB Design):</b> На высоких частотах дорожки процессора ведут себя как волноводы; инженеры борются с паразитным излучением и электромагнитной совместимостью (EMC).<br>" +
+                  "• <b>Медицинская томография (МРТ):</b> Использование мощных магнитных и радиочастотных полей для сканирования внутренних органов.",
+        task: "Какое свойство магнитных полей отражает уравнение div(B) = 0?",
+        options: ["Отсутствие магнитных монополей (зарядов)", "Наличие свободных токов", "Бесконечную скорость света", "Равенство энергий"],
+        correct: 0,
+        hint: "Дивергенция равна нулю, что означает замкнутость магнитных линий и отсутствие изолированных магнитных полюсов.",
+        keywords: ["монопол", "заряд", "замкнут", "магнит", "силовы"]
+    },
+    statphys: {
+        badge: "Статистическая физика",
+        title: "Каноническое распределение Гиббса",
+        theory: "<b>Фундаментальный конспект:</b><br><br>" +
+                "1. <b>Проблема многочастичных систем:</b> Описать $10^{23}$ атомов газа через механику Ньютона или Шредингера невозможно из-за хаоса и размерности.<br><br>2. <b>Ансамбли и вероятность:</b> Вместо точных траекторий используется статистический подход и концепция фазового пространства.<br><br>" +
+                "3. <b>Распределение Гиббса:</b> Вероятность $w_i$ того, что подсистема имеет энергию $E_i$, находясь в термостате при температуре $T$, пропорциональна экспоненте Больцмана: $w_i \\propto \\exp(-E_i / kT)$.<br><br>" +
+                "4. <b>Статистическая сумма (Зустат):</b> Нормирующий множитель $Z = \\sum \\exp(-E_i / kT)$, через который вычисляются все макропараметры (давление, энтропия, свободная энергия).",
+        explanation: "<b>В чем глубокий смысл?</b> Температура — это не просто шкала на градуснике, а мера интенсивности хаотичного теплового движения. Распределение Гиббса объясняет, как из чистого хаоса на микроуровне рождаются строгие законы макроскопической термодинамики.",
+        practice: "<b>🛠 Где это применяется в реальном мире и хайтеке?</b><br><br>" +
+                  "• <b>Искусственный интеллект и нейросети:</b> Архитектура <i>Boltzmann Machines</i> (машины Больцмана) в машинном обучении и генеративных моделях прямо заимствует статистическое распределение для поиска оптимальных весов.<br>" +
+                  "• <b>Дата-центры и охлаждение чипов:</b> Термодинамический анализ тепловыделения процессоров при пиковых нагрузках.<br>" +
+                  "• <b>Материаловедение:</b> Прогнозирование фазовых переходов сплавов и полупроводников при изменении температур.",
+        task: "Какой параметр входит в показатель экспоненты распределения Гиббса наряду с энергией?",
+        options: ["Абсолютная температура T", "Масса частиц", "Внешнее давление", "Электрический заряд"],
+        correct: 0,
+        hint: "Вероятность состояния зависит от температуры через отношение энергии к тепловой энергии kT.",
+        keywords: ["температур", "энерги", "хаос", "теплор", "вероятност", "состоян"]
+    },
+    astrophysics: {
+        badge: "Астрофизика и космология",
+        title: "Общая теория относительности и черные дыры",
+        theory: "<b>Фундаментальный конспект:</b><br><br>" +
+                "1. <b>Крах ньютоновской гравитации:</b> Тяготение — это не сила притяжения между телами на расстоянии, а следствие искривления четырехмерного пространства-времени.<br><br>" +
+                "2. <b>Уравнения Эйнштейна:</b> $G_{\\mu\\nu} = \\frac{8\pi G}{c^4} T_{\\mu\\nu}$ (геометрия искривления пространства-времени равна распределению массы-энергии).<br><br>" +
+                "3. <b>Радиус Шварцшильда:</b> Критический радиус $r_s = \\frac{2GM}{c^2}$, при сжатии массы до которого вторая космическая скорость сравнивается со скоростью света.<br><br>" +
+                "4. <b>Горизонт событий:</b> Односторонняя мембрана космоса, из-под которой ничто (даже свет) не может вернуться назад.",
+        explanation: "<b>В чем глубокий смысл?</b> Масса говорит пространству, как искривляться, а искривленное пространство говорит массе, как двигаться. Черные дыры — это абсолютный предел этого процесса, где материя сжимается в сингулярность, а время и пространство меняются местами.",
+        practice: "<b>🛠 Где это применяется в реальном мире и хайтеке?</b><br><br>" +
+                  "• <b>Системы спутниковой навигации (GPS и ГЛОНАСС):</b> Часы на спутниках идут быстрее из-за меньшей гравитации Земли (ОТО) и движения (СТО). Без учета релятивистских поправок погрешность навигации навигаторов составляла бы километры уже за сутки!<br>" +
+                  "• <b>Астрономические обсерватории и гравитационно-волновая детекция (LIGO):</b> Обработка сигналов слияния черных дыр.<br>" +
+                  "• <b>Космическая связь:</b> Расчет траекторий аппаратов в сильных гравитационных полях планет (гравитационные маневры).",
+        task: "Что является причиной гравитационного притяжения масс в Общей теории относительности?",
+        options: ["Искривление геометрии пространства-времени", "Обмен фотонами", "Магнитное поле ядра", "Вакуумное давление"],
+        correct: 0,
+        hint: "В ОТО гравитация объясняется не силами притяжения, а геометрической кривизной пространства-времени.",
+        keywords: ["искривлен", "пространств", "рем", "гравитац", "масс", "черн"]
+    }
+};
+
+let currentTopicKey = '';
+
+function openTopic(key) {
+    currentTopicKey = key;
+    const data = physicsData[key];
+
+    document.getElementById('topic-badge').innerText = data.badge;
+    document.getElementById('topic-title').innerText = data.title;
+    
+    document.getElementById('content-theory').innerHTML = data.theory;
+    document.getElementById('content-explanation').innerHTML = data.explanation;
+    document.getElementById('content-practice').innerHTML = data.practice;
+    document.getElementById('feynman-input').value = '';
+    document.getElementById('feynman-result').classList.add('hidden');
+    
+    setupTrainer(data);
+    switchTab('theory');
+
+    document.getElementById('screen-home').classList.add('hidden');
+    document.getElementById('screen-topic').classList.remove('hidden');
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('tab-theory').classList.add('hidden');
+    document.getElementById('tab-explanation').classList.add('hidden');
+    document.getElementById('tab-practice').classList.add('hidden');
+    document.getElementById('tab-trainer').classList.add('hidden');
+    document.getElementById('tab-feynman').classList.add('hidden');
+
+    if (tabName === 'theory') {
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+        document.getElementById('tab-theory').classList.remove('hidden');
+    } else if (tabName === 'explanation') {
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+        document.getElementById('tab-explanation').classList.remove('hidden');
+    } else if (tabName === 'practice') {
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active');
+        document.getElementById('tab-practice').classList.remove('hidden');
+    } else if (tabName === 'trainer') {
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active');
+        document.getElementById('tab-trainer').classList.remove('hidden');
+    } else if (tabName === 'feynman') {
+        document.querySelector('.tab-btn:nth-child(5)').classList.add('active');
+        document.getElementById('tab-feynman').classList.remove('hidden');
+    }
+}
+
+function setupTrainer(data) {
+    document.getElementById('content-task').innerText = data.task;
+    document.getElementById('content-feedback').classList.add('hidden');
+    
+    const container = document.getElementById('content-options');
+    container.innerHTML = '';
+
+    let indices = [0, 1, 2, 3];
+    indices.sort(() => Math.random() - 0.5);
+
+    indices.forEach(i => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = data.options[i];
+        btn.onclick = () => checkAnswer(i, data.correct, data.hint);
+        container.appendChild(btn);
+    });
+}
+
+function checkAnswer(chosen, correct, hint) {
+    const allBtns = document.querySelectorAll('#content-options .option-btn');
+    allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+    allBtns.forEach((b) => {
+        if (b.innerText === physicsData[currentTopicKey].options[correct]) {
+            b.classList.add('correct');
+        }
+    });
+
+    if (chosen !== correct) {
+        event.target.classList.add('wrong');
+    }
+
+    const feedback = document.getElementById('content-feedback');
+    feedback.innerHTML = `<b>💡 Разбор:</b><br>${hint}`;
+    feedback.classList.remove('hidden');
+}
+
+// Эмуляция ответа ИИ/API на текстовое объяснение
+function evaluateFeynman() {
+    const text = document.getElementById('feynman-input').value.trim();
+    const resultBox = document.getElementById('feynman-result');
+    
+    if (text.length < 15) {
+        alert("Напиши чуть подробнее, раскрой мысль полнее!");
+        return;
+    }
+
+    const keywords = physicsData[currentTopicKey].keywords;
+    let matchCount = 0;
+    keywords.forEach(kw => {
+        if (text.toLowerCase().includes(kw)) matchCount++;
+    });
+
+    let score = Math.min(100, Math.max(45, Math.round((matchCount / keywords.length) * 100) + (text.length > 60 ? 25 : 0)));
+    
+    let feedbackText = "";
+    if (score >= 80) {
+        feedbackText = `🔥 <b>Отлично! Уровень понимания: ${score}%</b><br>Прекрасное инженерное объяснение. Ты четко уловил суть явления!`;
+        resultBox.style.background = "rgba(16, 185, 129, 0.1)";
+        resultBox.style.borderColor = "var(--accent)";
+    } else {
+        feedbackText = `⚠️ <b>Неплохо, но требуется точность. Уровень: ${score}%</b><br>Попробуй точнее использовать физические термины (например, ключевые уравнения или принципы), чтобы объяснение звучало профессионально.`;
+        resultBox.style.background = "rgba(245, 158, 11, 0.1)";
+        resultBox.style.borderColor = "var(--warning)";
+    }
+
+    resultBox.innerHTML = feedbackText;
+    resultBox.classList.remove('hidden');
+}
+
+function goHome() {
+    document.getElementById('screen-topic').classList.add('hidden');
+    document.getElementById('screen-home').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
